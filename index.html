@@ -8,7 +8,8 @@
 <meta property="og:title" content="Quint Security">
 <meta property="og:description" content="RBAC, risk scoring, and cryptographic audit trails for AI agents.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@1,2&display=swap" rel="stylesheet">
 <style>
 @keyframes reveal{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
@@ -24,7 +25,7 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root{--bg:#050508;--ink:#e8e4de;--ink-2:#b0ab9f;--ink-3:#6b6760;--ink-4:#3a3833;--surface:#0a0a0f;--surface-2:#111116;--green:#00e09e;--green-dim:rgba(0,224,158,0.07);--red:#ff4f5e;--amber:#ffb340;--blue:#4a9eff;--serif:'Instrument Serif',Georgia,serif;--mono:'DM Mono','SF Mono',monospace;--sans:'DM Sans',-apple-system,sans-serif}
+:root{--bg:#050508;--ink:#e8e4de;--ink-2:#b0ab9f;--ink-3:#6b6760;--ink-4:#3a3833;--surface:#0a0a0f;--surface-2:#111116;--green:#00e09e;--green-dim:rgba(0,224,158,0.07);--red:#ff4f5e;--amber:#ffb340;--blue:#4a9eff;--serif:'Switzer',-apple-system,sans-serif;--mono:'DM Mono','SF Mono',monospace;--sans:'Switzer',-apple-system,sans-serif}
 
 html{scroll-behavior:smooth}
 body{font-family:var(--serif);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6;cursor:none}
@@ -54,9 +55,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);b
 .hero-text{position:relative;z-index:1}
 .hero-eyebrow{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);margin-bottom:2rem;display:flex;align-items:center;gap:10px;animation:slideIn 0.8s ease both}
 .hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--green)}
-.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(3.5rem,6vw,6rem);line-height:1.0;letter-spacing:-0.03em;margin-bottom:2rem;animation:none;perspective:600px}
-.hero h1 em{font-style:italic;background:linear-gradient(90deg,var(--green),#00ffc8,var(--green),#00b8ff,var(--green));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
-.hero h1 .word{display:inline-block;opacity:0;transform:translateY(100%) rotateX(-80deg);animation:wordReveal 0.7s cubic-bezier(0.16,1,0.3,1) forwards;transform-origin:bottom center}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(3.5rem,6vw,6rem);line-height:1.1;letter-spacing:-0.015em;margin-bottom:2rem;animation:none;perspective:600px}
+.hero h1 em{font-style:italic;padding-right:0.05em;background:linear-gradient(90deg,var(--green),#00ffc8,var(--green),#00b8ff,var(--green));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+.hero h1 .word{overflow:visible}
+.hero h1 .word{display:inline-block;margin-right:0.25em;opacity:0;transform:translateY(100%) rotateX(-80deg);animation:wordReveal 0.7s cubic-bezier(0.16,1,0.3,1) forwards;transform-origin:bottom center}
 .hero-desc{font-family:var(--sans);font-size:1.05rem;color:var(--ink-2);max-width:420px;line-height:1.75;margin-bottom:3rem;animation:reveal 1s ease 0.25s both}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap;animation:reveal 1s ease 0.4s both}
 .btn-lg{font-family:var(--sans);font-size:0.92rem;font-weight:600;padding:16px 32px;border-radius:10px;border:none;transition:all 0.25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
