@@ -1,528 +1,632 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quint — Security for AI Agents</title>
-  <meta name="description" content="The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did.">
-  <meta property="og:title" content="Quint — Security for AI Agents">
-  <meta property="og:description" content="The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did.">
-  <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quint — Security for AI Agents</title>
+<meta name="description" content="The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did.">
+<meta property="og:title" content="Quint Security">
+<meta property="og:description" content="RBAC, risk scoring, and cryptographic audit trails for AI agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@keyframes reveal { from { opacity:0; transform:translateY(40px) } to { opacity:1; transform:translateY(0) } }
+@keyframes slideIn { from { opacity:0; transform:translateX(-30px) } to { opacity:1; transform:translateX(0) } }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes drift { 0%{transform:translate(0,0)} 50%{transform:translate(-15px,10px)} 100%{transform:translate(0,0)} }
+@keyframes scanDown { 0%{top:-2px;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{top:calc(100% - 2px);opacity:0} }
 
-    :root {
-      --bg: #09090b;
-      --surface: #111113;
-      --surface-2: #18181b;
-      --border: #27272a;
-      --text: #fafafa;
-      --muted: #a1a1aa;
-      --accent: #3b82f6;
-      --accent-glow: rgba(59, 130, 246, 0.15);
-      --green: #22c55e;
-      --red: #ef4444;
-      --yellow: #eab308;
-      --radius: 12px;
-    }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+:root {
+  --bg: #050508;
+  --ink: #e8e4de;
+  --ink-2: #b0ab9f;
+  --ink-3: #6b6760;
+  --ink-4: #3a3833;
+  --surface: #0a0a0f;
+  --surface-2: #111116;
+  --green: #00e09e;
+  --green-dim: rgba(0,224,158,0.07);
+  --red: #ff4f5e;
+  --amber: #ffb340;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono: 'DM Mono', 'SF Mono', monospace;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+}
 
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    code, .mono { font-family: 'JetBrains Mono', monospace; }
+html { scroll-behavior: smooth; }
 
-    /* Nav */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(9, 9, 11, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-    }
-    .nav-inner {
-      max-width: 1200px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 64px;
-    }
-    .logo {
-      font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .logo-icon {
-      width: 28px; height: 28px; background: var(--accent);
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700;
-    }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links a { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
-    .nav-links a:hover { color: var(--text); text-decoration: none; }
+body {
+  font-family: var(--serif);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
 
-    /* Buttons */
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.65rem 1.5rem; border-radius: 8px;
-      font-size: 0.9rem; font-weight: 600;
-      border: none; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-primary {
-      background: var(--accent); color: white;
-    }
-    .btn-primary:hover { background: #2563eb; text-decoration: none; }
-    .btn-ghost {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { background: var(--surface); text-decoration: none; }
+/* noise */
+body::before {
+  content:''; position:fixed; inset:0; z-index:9999; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
 
-    /* Hero */
-    .hero {
-      padding: 10rem 2rem 6rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 800px; height: 600px;
-      background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.35rem 1rem; border-radius: 999px;
-      background: var(--surface); border: 1px solid var(--border);
-      font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem;
-    }
-    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 800; letter-spacing: -0.03em;
-      line-height: 1.1; margin-bottom: 1.5rem;
-      position: relative;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero p {
-      font-size: 1.2rem; color: var(--muted);
-      max-width: 600px; margin: 0 auto 2.5rem;
-    }
-    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+a { color: var(--green); text-decoration: none; }
 
-    /* Terminal */
-    .terminal {
-      max-width: 680px; margin: 4rem auto 0;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-      text-align: left; position: relative;
-    }
-    .terminal-bar {
-      display: flex; align-items: center; gap: 8px;
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
-    }
-    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .terminal-dot:nth-child(1) { background: #ef4444; }
-    .terminal-dot:nth-child(2) { background: #eab308; }
-    .terminal-dot:nth-child(3) { background: #22c55e; }
-    .terminal-body {
-      padding: 1.25rem 1.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem; line-height: 1.8;
-    }
-    .terminal-body .prompt { color: var(--green); }
-    .terminal-body .cmd { color: var(--text); }
-    .terminal-body .output { color: var(--muted); }
-    .terminal-body .denied { color: var(--red); }
-    .terminal-body .allowed { color: var(--green); }
-    .terminal-body .flag { color: var(--yellow); }
+/* ===== NAV ===== */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  backdrop-filter: blur(16px);
+  background: rgba(5,5,8,0.75);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.nav-inner {
+  max-width:1400px; margin:0 auto; padding:0 3rem;
+  display:flex; align-items:center; justify-content:space-between; height:60px;
+}
+.nav-brand {
+  font-family: var(--mono); font-size:0.85rem; font-weight:500;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink);
+}
+.nav-brand b { color: var(--green); }
+.nav-right { display:flex; align-items:center; gap:2.5rem; }
+.nav-right a { font-family:var(--sans); font-size:0.82rem; color:var(--ink-2); font-weight:500; transition:color 0.2s; }
+.nav-right a:hover { color:var(--ink); }
+.nav-btn {
+  font-family:var(--mono); font-size:0.78rem; padding:8px 20px;
+  border:1px solid var(--green); color:var(--green);
+  border-radius:6px; transition:all 0.2s; background:transparent; cursor:pointer;
+}
+.nav-btn:hover { background:var(--green); color:var(--bg); }
 
-    /* Flow diagram */
-    .flow {
-      max-width: 900px; margin: 6rem auto 0;
-      padding: 0 2rem;
-    }
-    .flow-diagram {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem; line-height: 1.8;
-      color: var(--muted);
-      overflow-x: auto;
-    }
-    .flow-diagram .highlight { color: var(--accent); font-weight: 600; }
-    .flow-diagram .label { color: var(--text); }
+/* ===== HERO ===== */
+.hero {
+  min-height:100vh; display:grid;
+  grid-template-columns: 1fr 1fr;
+  max-width:1400px; margin:0 auto; padding:0 3rem;
+  align-items:center; gap:4rem;
+  position:relative;
+}
+/* ambient glow */
+.hero::before {
+  content:''; position:absolute; top:10%; left:-10%;
+  width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,224,158,0.04), transparent 70%);
+  animation: drift 20s ease-in-out infinite; pointer-events:none;
+}
+.hero-text { position:relative; z-index:1; }
+.hero-eyebrow {
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--green); margin-bottom:2rem;
+  display:flex; align-items:center; gap:10px;
+  animation: slideIn 0.8s ease both;
+}
+.hero-eyebrow::before {
+  content:''; width:32px; height:1px; background:var(--green);
+}
+.hero h1 {
+  font-family:var(--serif); font-weight:400;
+  font-size:clamp(3.5rem, 6vw, 6rem);
+  line-height:1.0; letter-spacing:-0.03em;
+  margin-bottom:2rem;
+  animation: reveal 1s ease 0.1s both;
+}
+.hero h1 em {
+  font-style:italic; color:var(--green);
+}
+.hero-desc {
+  font-family:var(--sans); font-size:1.05rem; color:var(--ink-2);
+  max-width:420px; line-height:1.75; margin-bottom:3rem;
+  animation: reveal 1s ease 0.25s both;
+}
+.hero-actions {
+  display:flex; gap:16px; flex-wrap:wrap;
+  animation: reveal 1s ease 0.4s both;
+}
+.btn-lg {
+  font-family:var(--sans); font-size:0.92rem; font-weight:600;
+  padding:16px 32px; border-radius:10px; border:none; cursor:pointer;
+  transition:all 0.25s; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+}
+.btn-fill { background:var(--green); color:var(--bg); }
+.btn-fill:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,224,158,0.2); }
+.btn-outline { background:transparent; color:var(--ink); border:1px solid var(--ink-4); }
+.btn-outline:hover { border-color:var(--ink-3); background:var(--surface-2); transform:translateY(-2px); }
 
-    /* Features */
-    .features {
-      max-width: 1200px; margin: 0 auto;
-      padding: 8rem 2rem;
-    }
-    .features-header {
-      text-align: center; margin-bottom: 4rem;
-    }
-    .features-header h2 {
-      font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em;
-      margin-bottom: 1rem;
-    }
-    .features-header p { color: var(--muted); font-size: 1.1rem; }
-    .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-    .feature-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2rem;
-      transition: border-color 0.2s;
-    }
-    .feature-card:hover { border-color: #3f3f46; }
-    .feature-icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; margin-bottom: 1rem;
-      background: var(--surface-2); border: 1px solid var(--border);
-    }
-    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+/* terminal */
+.hero-terminal {
+  position:relative; z-index:1;
+  animation: reveal 1s ease 0.5s both;
+}
+.term {
+  background:var(--surface); border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px; overflow:hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02) inset;
+  transform: rotate(0.5deg);
+}
+.term-chrome {
+  padding:14px 18px; display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.01);
+}
+.term-dot { width:11px; height:11px; border-radius:50%; opacity:0.7; }
+.term-dot:nth-child(1){background:#ff5f57} .term-dot:nth-child(2){background:#febc2e} .term-dot:nth-child(3){background:#28c840}
+.term-label {
+  flex:1; text-align:center; font-family:var(--mono); font-size:0.68rem;
+  color:var(--ink-4); letter-spacing:0.05em; margin-right:36px;
+}
+.term-body {
+  padding:1.75rem 2rem 2rem; font-family:var(--mono); font-size:0.8rem;
+  line-height:2.1; color:var(--ink-2); position:relative;
+}
+/* scanline */
+.term-body::after {
+  content:''; position:absolute; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, rgba(0,224,158,0.08), transparent);
+  animation: scanDown 4s linear infinite; pointer-events:none;
+}
+.term-body .line { opacity:0; animation: reveal 0.4s ease forwards; }
+.term-body .p { color:var(--green); }
+.term-body .c { color:var(--ink); }
+.term-body .o { color:var(--ink-3); }
+.term-body .ok { color:var(--green); }
+.term-body .no { color:var(--red); }
+.term-body .warn { color:var(--amber); }
+.term-body .cursor { display:inline-block; width:8px; height:15px; background:var(--green); vertical-align:text-bottom; animation:blink 1s step-end infinite; }
+.term-body .score {
+  display:inline-block; padding:1px 8px; border-radius:3px;
+  font-size:0.7rem; font-weight:500; margin-left:4px;
+}
+.score-lo { background:rgba(0,224,158,0.1); color:var(--green); }
+.score-hi { background:rgba(255,79,94,0.12); color:var(--red); }
+.score-md { background:rgba(255,179,64,0.12); color:var(--amber); }
 
-    /* How it works */
-    .how {
-      max-width: 1200px; margin: 0 auto;
-      padding: 4rem 2rem 8rem;
-    }
-    .how h2 {
-      text-align: center; font-size: 2.5rem; font-weight: 800;
-      letter-spacing: -0.02em; margin-bottom: 4rem;
-    }
-    .steps {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-    .step {
-      text-align: center; padding: 2rem;
-    }
-    .step-num {
-      width: 48px; height: 48px; border-radius: 50%;
-      background: var(--accent-glow); border: 2px solid var(--accent);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700; color: var(--accent);
-      margin: 0 auto 1.25rem;
-    }
-    .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .step p { color: var(--muted); font-size: 0.9rem; }
+/* ===== MARQUEE STRIP ===== */
+.strip {
+  border-top:1px solid rgba(255,255,255,0.04);
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  padding:1.5rem 0; overflow:hidden; white-space:nowrap;
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--ink-4);
+}
+.strip-inner {
+  display:inline-block; animation: marquee 30s linear infinite;
+}
+@keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.strip-inner span { margin:0 3rem; }
+.strip-inner .dot { color:var(--green); }
 
-    /* Pricing */
-    .pricing {
-      max-width: 1000px; margin: 0 auto;
-      padding: 4rem 2rem 8rem;
-    }
-    .pricing h2 {
-      text-align: center; font-size: 2.5rem; font-weight: 800;
-      letter-spacing: -0.02em; margin-bottom: 1rem;
-    }
-    .pricing > p {
-      text-align: center; color: var(--muted); font-size: 1.1rem;
-      margin-bottom: 4rem;
-    }
-    .pricing-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    .pricing-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2.5rem;
-    }
-    .pricing-card.featured { border-color: var(--accent); }
-    .pricing-card .tier {
-      font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.5rem;
-    }
-    .pricing-card.featured .tier { color: var(--accent); }
-    .pricing-card .price {
-      font-size: 2.5rem; font-weight: 800; margin-bottom: 0.25rem;
-    }
-    .pricing-card .price-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
-    .pricing-card ul { list-style: none; margin-bottom: 2rem; }
-    .pricing-card li {
-      padding: 0.4rem 0; color: var(--muted); font-size: 0.9rem;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .pricing-card li::before { content: '✓'; color: var(--green); font-weight: 600; }
+/* ===== DOSSIER / FEATURES ===== */
+.dossier {
+  max-width:1000px; margin:0 auto; padding:8rem 3rem;
+}
+.dossier-header {
+  display:flex; align-items:baseline; gap:2rem; margin-bottom:5rem;
+  border-bottom:1px solid var(--ink-4); padding-bottom:1.5rem;
+}
+.dossier-header h2 {
+  font-family:var(--serif); font-size:clamp(2.5rem,4vw,4rem);
+  font-weight:400; letter-spacing:-0.02em; line-height:1.1;
+}
+.dossier-header .num {
+  font-family:var(--mono); font-size:0.75rem; color:var(--ink-3);
+  letter-spacing:0.1em;
+}
+.dossier-item {
+  display:grid; grid-template-columns:200px 1fr;
+  gap:2rem; padding:3rem 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.dossier-item:last-child { border-bottom:none; }
+.dossier-label {
+  font-family:var(--mono); font-size:0.75rem; color:var(--green);
+  letter-spacing:0.12em; text-transform:uppercase;
+  padding-top:0.3rem;
+}
+.dossier-content h3 {
+  font-family:var(--serif); font-size:1.6rem; font-weight:400;
+  margin-bottom:0.75rem; line-height:1.3;
+}
+.dossier-content p {
+  font-family:var(--sans); font-size:0.92rem; color:var(--ink-2);
+  line-height:1.75; max-width:520px;
+}
 
-    /* CTA */
-    .cta {
-      text-align: center; padding: 6rem 2rem 8rem;
-      position: relative;
-    }
-    .cta::before {
-      content: '';
-      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 800px; height: 400px;
-      background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cta h2 {
-      font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em;
-      margin-bottom: 1rem; position: relative;
-    }
-    .cta p {
-      color: var(--muted); font-size: 1.1rem;
-      max-width: 500px; margin: 0 auto 2rem;
-      position: relative;
-    }
+/* ===== HOW ===== */
+.how {
+  max-width:1000px; margin:0 auto; padding:4rem 3rem 8rem;
+}
+.how-header {
+  display:flex; align-items:baseline; gap:2rem; margin-bottom:4rem;
+  border-bottom:1px solid var(--ink-4); padding-bottom:1.5rem;
+}
+.how-header h2 {
+  font-family:var(--serif); font-size:clamp(2.5rem,4vw,4rem);
+  font-weight:400; letter-spacing:-0.02em;
+}
+.how-header .num { font-family:var(--mono); font-size:0.75rem; color:var(--ink-3); letter-spacing:0.1em; }
+.how-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:3rem; }
+.how-step {}
+.how-step-num {
+  font-family:var(--serif); font-size:4rem; font-style:italic;
+  color:var(--green); opacity:0.3; line-height:1; margin-bottom:1rem;
+}
+.how-step h3 { font-family:var(--serif); font-size:1.3rem; margin-bottom:0.5rem; }
+.how-step p { font-family:var(--sans); font-size:0.88rem; color:var(--ink-2); line-height:1.7; }
+.how-step code {
+  font-family:var(--mono); font-size:0.8rem; color:var(--green);
+  background:var(--green-dim); border:1px solid rgba(0,224,158,0.1);
+  padding:2px 10px; border-radius:5px;
+}
 
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      text-align: center;
-      color: var(--muted); font-size: 0.85rem;
-    }
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--text); }
+/* ===== PRICING ===== */
+.pricing {
+  max-width:1000px; margin:0 auto; padding:4rem 3rem 8rem;
+}
+.pricing-header {
+  display:flex; align-items:baseline; gap:2rem; margin-bottom:4rem;
+  border-bottom:1px solid var(--ink-4); padding-bottom:1.5rem;
+}
+.pricing-header h2 { font-family:var(--serif); font-size:clamp(2.5rem,4vw,4rem); font-weight:400; letter-spacing:-0.02em; }
+.pricing-header .num { font-family:var(--mono); font-size:0.75rem; color:var(--ink-3); letter-spacing:0.1em; }
+.pricing-cols {
+  display:grid; grid-template-columns:1fr 1px 1fr; gap:3rem;
+}
+.pricing-divider { background:var(--ink-4); }
+.pricing-col {}
+.pricing-tier {
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:1rem;
+}
+.pricing-col:last-child .pricing-tier { color:var(--green); }
+.pricing-price {
+  font-family:var(--serif); font-size:3.5rem; font-weight:400;
+  line-height:1; margin-bottom:0.25rem;
+}
+.pricing-note { font-family:var(--sans); font-size:0.82rem; color:var(--ink-3); margin-bottom:2.5rem; }
+.pricing-list { list-style:none; }
+.pricing-list li {
+  font-family:var(--sans); font-size:0.88rem; color:var(--ink-2);
+  padding:0.6rem 0; border-bottom:1px solid rgba(255,255,255,0.03);
+  display:flex; align-items:center; gap:10px;
+}
+.pricing-list li::before {
+  content:''; width:5px; height:5px; border-radius:50%;
+  background:var(--ink-4); flex-shrink:0;
+}
+.pricing-col:last-child .pricing-list li::before { background:var(--green); }
+.pricing-action { margin-top:2.5rem; }
+.pricing-action .btn-lg { width:100%; justify-content:center; }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hero { padding: 8rem 1.5rem 4rem; }
-      .features, .how, .pricing { padding-left: 1.5rem; padding-right: 1.5rem; }
-    }
-  </style>
+/* ===== CTA ===== */
+.cta {
+  text-align:center; padding:6rem 3rem 4rem;
+  position:relative;
+}
+.cta::before {
+  content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:600px; height:300px;
+  background:radial-gradient(ellipse, rgba(0,224,158,0.03), transparent 70%);
+  pointer-events:none;
+}
+.cta h2 {
+  font-family:var(--serif); font-size:clamp(2.5rem,5vw,4.5rem);
+  font-weight:400; letter-spacing:-0.03em; margin-bottom:1.5rem;
+  position:relative;
+}
+.cta h2 em { font-style:italic; color:var(--green); }
+.cta p {
+  font-family:var(--sans); color:var(--ink-2); font-size:1rem;
+  max-width:400px; margin:0 auto 3rem; position:relative;
+}
+
+/* waitlist */
+.waitlist {
+  max-width:440px; margin:0 auto; padding:0 2rem 6rem;
+}
+.wl-form { display:flex; gap:8px; }
+.wl-form input {
+  flex:1; padding:15px 16px; border-radius:10px;
+  border:1px solid var(--ink-4); background:var(--surface);
+  color:var(--ink); font-family:var(--sans); font-size:0.9rem;
+  outline:none; transition:border-color 0.2s;
+}
+.wl-form input:focus { border-color:var(--green); }
+.wl-form input::placeholder { color:var(--ink-4); }
+.wl-form button {
+  padding:15px 24px; border-radius:10px; border:none;
+  background:var(--green); color:var(--bg);
+  font-family:var(--sans); font-size:0.88rem; font-weight:600;
+  cursor:pointer; white-space:nowrap; transition:all 0.2s;
+}
+.wl-form button:hover { opacity:0.85; }
+.wl-msg { color:var(--green); font-family:var(--sans); font-size:0.85rem; margin-top:1rem; display:none; text-align:center; }
+
+/* ===== FOOTER ===== */
+footer {
+  border-top:1px solid rgba(255,255,255,0.04);
+  max-width:1400px; margin:0 auto; padding:2rem 3rem;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:0.72rem; color:var(--ink-4);
+  letter-spacing:0.05em;
+}
+footer a { color:var(--ink-4); transition:color 0.2s; }
+footer a:hover { color:var(--ink-2); }
+.footer-links { display:flex; gap:2rem; }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px) {
+  .hero { grid-template-columns:1fr; padding:8rem 2rem 4rem; gap:3rem; }
+  .hero-terminal { order:-1; }
+  .term { transform:none; }
+  .dossier-item { grid-template-columns:1fr; gap:0.5rem; }
+  .how-steps { grid-template-columns:1fr; }
+  .pricing-cols { grid-template-columns:1fr; }
+  .pricing-divider { height:1px; width:100%; }
+  .strip { display:none; }
+}
+@media(max-width:640px) {
+  .nav-right a:not(.nav-btn) { display:none; }
+  .nav-inner { padding:0 1.5rem; }
+  .hero,.dossier,.how,.pricing { padding-left:1.5rem; padding-right:1.5rem; }
+  footer { flex-direction:column; gap:1rem; }
+}
+</style>
 </head>
 <body>
 
-  <nav>
-    <div class="nav-inner">
-      <div class="logo">
-        <div class="logo-icon">Q</div>
-        Quint
-      </div>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#how">How it works</a>
-        <a href="#pricing">Pricing</a>
-        <a href="https://github.com/Quint-Security" target="_blank">GitHub</a>
-        <a href="https://docs.quint.security" class="btn btn-ghost" style="padding: 0.4rem 1rem;">Docs</a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      Now in public beta
-    </div>
-    <h1>Security for<br><span>AI Agents</span></h1>
-    <p>The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did. Data never leaves your machine.</p>
-    <div class="hero-buttons">
-      <a href="#get-started" class="btn btn-primary">Get Started →</a>
-      <a href="https://github.com/Quint-Security/proxy" target="_blank" class="btn btn-ghost">View on GitHub</a>
-    </div>
-
-    <div class="terminal">
-      <div class="terminal-bar">
-        <div class="terminal-dot"></div>
-        <div class="terminal-dot"></div>
-        <div class="terminal-dot"></div>
-      </div>
-      <div class="terminal-body">
-        <div><span class="prompt">$</span> <span class="cmd">brew install quint-security/tap/quint</span></div>
-        <div><span class="prompt">$</span> <span class="cmd">quint init</span></div>
-        <div><span class="output">✓ Detected Claude Code with 3 MCP servers</span></div>
-        <div><span class="output">✓ Generated Ed25519 keypair</span></div>
-        <div><span class="output">✓ Created policy (default: balanced)</span></div>
-        <div><span class="output">✓ Wrapped 3 servers — Quint is active</span></div>
-        <div style="margin-top: 0.5rem;"><span class="prompt">$</span> <span class="cmd">quint status</span></div>
-        <div><span class="allowed">✓ read_file</span> <span class="output">→ allowed (risk: 12)</span></div>
-        <div><span class="allowed">✓ list_dir</span> <span class="output">→ allowed (risk: 8)</span></div>
-        <div><span class="denied">✗ execute_command</span> <span class="output">→ denied by policy</span></div>
-        <div><span class="flag">⚠ write_file /etc/passwd</span> <span class="output">→ flagged (risk: 91)</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Flow -->
-  <div class="flow">
-    <div class="flow-diagram">
-      <pre>
-<span class="label">  Your AI Agent</span>        <span class="highlight">Quint Proxy</span>          <span class="label">MCP Server</span>
-  ┌──────────┐        ┌──────────────┐       ┌──────────┐
-  │ Claude   │───────▶│ <span class="highlight">Intercept</span>    │──────▶│ filesystem│
-  │ Cursor   │        │ <span class="highlight">Enforce RBAC</span> │       │ git      │
-  │ Cline    │◀───────│ <span class="highlight">Score Risk</span>  │◀──────│ memory   │
-  │ OpenClaw │        │ <span class="highlight">Sign & Audit</span>│       │ APIs     │
-  └──────────┘        └──────────────┘       └──────────┘
-                             │
-                      <span class="highlight">Data never leaves</span>
-                      <span class="highlight">your machine.</span></pre>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand"><b>Q</b>UINT</div>
+    <div class="nav-right">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://github.com/Quint-Security" target="_blank">GitHub</a>
+      <a href="#cta" class="nav-btn">Get Started</a>
     </div>
   </div>
+</nav>
 
-  <!-- Features -->
-  <section class="features" id="features">
-    <div class="features-header">
-      <h2>Everything you need to secure AI agents</h2>
-      <p>One binary. Zero config. Works with any MCP-compatible agent.</p>
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Public Beta</div>
+    <h1>Security for<br><em>AI agents</em></h1>
+    <p class="hero-desc">RBAC, risk scoring, and tamper-proof audit trails for autonomous agents. Every tool call intercepted, every action signed. Your data never leaves your machine.</p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-lg btn-fill">Get Started</a>
+      <a href="https://github.com/Quint-Security/proxy" class="btn-lg btn-outline" target="_blank">View Source</a>
     </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Policy Enforcement</h3>
-        <p>Allow/deny rules per server, per tool, with glob patterns. Fail-closed by default — no policy match means deny.</p>
+  </div>
+  <div class="hero-terminal">
+    <div class="term">
+      <div class="term-chrome">
+        <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+        <span class="term-label">quint &mdash; terminal</span>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🤖</div>
-        <h3>Agent Identity & RBAC</h3>
-        <p>Each agent gets its own identity and scoped permissions. Reader, writer, admin — enforce least-privilege access to every tool.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Risk Scoring</h3>
-        <p>Every tool call scored 0–100 in real time. High-risk actions get flagged or auto-blocked. Configurable thresholds per server.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">✍️</div>
-        <h3>Cryptographic Audit Trail</h3>
-        <p>Every action signed with Ed25519, hash-chained in SQLite. Tamper-evident. Export the log — anyone can verify what happened.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">👆</div>
-        <h3>Human Approval Flow</h3>
-        <p>High-risk calls pause for human review. Approve or deny from the dashboard. Decisions are cryptographically signed.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Local-First</h3>
-        <p>Everything runs on your machine. No data sent to any cloud. No account required. The agent doesn't even know Quint exists.</p>
+      <div class="term-body" id="t"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STRIP ===== -->
+<div class="strip">
+  <div class="strip-inner">
+    <span>Claude Code</span><span class="dot">&bull;</span>
+    <span>Cursor</span><span class="dot">&bull;</span>
+    <span>Cline</span><span class="dot">&bull;</span>
+    <span>OpenClaw</span><span class="dot">&bull;</span>
+    <span>Any MCP Agent</span><span class="dot">&bull;</span>
+    <span>Ed25519 Signatures</span><span class="dot">&bull;</span>
+    <span>Hash-Chained Audit</span><span class="dot">&bull;</span>
+    <span>Zero Cloud Dependency</span><span class="dot">&bull;</span>
+    <span>Claude Code</span><span class="dot">&bull;</span>
+    <span>Cursor</span><span class="dot">&bull;</span>
+    <span>Cline</span><span class="dot">&bull;</span>
+    <span>OpenClaw</span><span class="dot">&bull;</span>
+    <span>Any MCP Agent</span><span class="dot">&bull;</span>
+    <span>Ed25519 Signatures</span><span class="dot">&bull;</span>
+    <span>Hash-Chained Audit</span><span class="dot">&bull;</span>
+    <span>Zero Cloud Dependency</span><span class="dot">&bull;</span>
+  </div>
+</div>
+
+<!-- ===== CAPABILITIES ===== -->
+<section class="dossier" id="capabilities">
+  <div class="dossier-header">
+    <h2>Capabilities</h2>
+    <span class="num">01 / 06</span>
+  </div>
+
+  <div class="dossier-item">
+    <div class="dossier-label">01 &mdash; Policy</div>
+    <div class="dossier-content">
+      <h3>Deterministic policy enforcement</h3>
+      <p>Allow/deny rules per server, per tool, with glob matching. First-match wins. No match means deny. No ambiguity, no exceptions.</p>
+    </div>
+  </div>
+  <div class="dossier-item">
+    <div class="dossier-label">02 &mdash; Identity</div>
+    <div class="dossier-content">
+      <h3>Agent identity and RBAC scopes</h3>
+      <p>Every agent gets its own API key and scoped permissions. Reader, writer, admin, executor. Enforce least-privilege on every single tool call.</p>
+    </div>
+  </div>
+  <div class="dossier-item">
+    <div class="dossier-label">03 &mdash; Risk</div>
+    <div class="dossier-content">
+      <h3>Real-time risk scoring</h3>
+      <p>Every call scored 0&ndash;100, weighted on action type, target sensitivity, and behavioral anomaly. Configurable thresholds for flag and deny.</p>
+    </div>
+  </div>
+  <div class="dossier-item">
+    <div class="dossier-label">04 &mdash; Audit</div>
+    <div class="dossier-content">
+      <h3>Cryptographic audit chain</h3>
+      <p>Ed25519 signatures on every entry. SHA-256 hash chain links them together. Tamper-evident by construction. Export the log &mdash; anyone can verify independently.</p>
+    </div>
+  </div>
+  <div class="dossier-item">
+    <div class="dossier-label">05 &mdash; Approval</div>
+    <div class="dossier-content">
+      <h3>Human-in-the-loop approvals</h3>
+      <p>High-risk calls pause and wait for human review. Approve or deny from the dashboard or CLI. Decisions are cryptographically signed into the audit trail.</p>
+    </div>
+  </div>
+  <div class="dossier-item">
+    <div class="dossier-label">06 &mdash; Local</div>
+    <div class="dossier-content">
+      <h3>Everything stays on your machine</h3>
+      <p>Single Go binary. No cloud. No account. No telemetry. The agent doesn&rsquo;t even know Quint is there. Your data is yours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW ===== -->
+<section class="how" id="how">
+  <div class="how-header">
+    <h2>Setup</h2>
+    <span class="num">3 steps</span>
+  </div>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-step-num">1</div>
+      <h3>Install</h3>
+      <p><code>brew install quint</code><br>Single binary. No runtime. No dependencies. Cross-platform.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">2</div>
+      <h3>Init</h3>
+      <p><code>quint init</code><br>Detects your AI tools. Generates Ed25519 keypair. Wraps your MCP servers automatically.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">3</div>
+      <h3>Done</h3>
+      <p><code>quint dashboard</code><br>Every tool call is now intercepted, policy-checked, risk-scored, signed, and logged.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="pricing" id="pricing">
+  <div class="pricing-header">
+    <h2>Pricing</h2>
+    <span class="num">2 tiers</span>
+  </div>
+  <div class="pricing-cols">
+    <div class="pricing-col">
+      <div class="pricing-tier">Developer</div>
+      <div class="pricing-price">Free</div>
+      <div class="pricing-note">forever, unlimited usage</div>
+      <ul class="pricing-list">
+        <li>Full local proxy &amp; policy engine</li>
+        <li>Agent identity &amp; RBAC scopes</li>
+        <li>Risk scoring with local heuristics</li>
+        <li>Cryptographic audit trail</li>
+        <li>Human approval flow</li>
+        <li>Local web dashboard</li>
+        <li>OAuth credential store</li>
+      </ul>
+      <div class="pricing-action">
+        <a href="#cta" class="btn-lg btn-outline">Get Started</a>
       </div>
     </div>
-  </section>
-
-  <!-- How it works -->
-  <section class="how" id="how">
-    <h2>Up and running in 30 seconds</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Install</h3>
-        <p><code>brew install quint</code> — single binary, no dependencies, no runtime.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Init</h3>
-        <p><code>quint init</code> — auto-detects your AI tools, generates keys, wraps your MCP servers.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Done</h3>
-        <p>Every agent action is now policy-checked, risk-scored, signed, and logged. Open <code>quint dashboard</code> to see it all.</p>
+    <div class="pricing-divider"></div>
+    <div class="pricing-col">
+      <div class="pricing-tier">Team</div>
+      <div class="pricing-price">$49<span style="font-family:var(--sans);font-size:1rem;color:var(--ink-3)"> /seat/mo</span></div>
+      <div class="pricing-note">billed monthly</div>
+      <ul class="pricing-list">
+        <li>Everything in Developer</li>
+        <li>Cloud dashboard &amp; centralized policy</li>
+        <li>Audit aggregation across machines</li>
+        <li>AI-powered risk scoring (dedicated model)</li>
+        <li>Push notification approvals</li>
+        <li>Team RBAC &amp; SSO</li>
+        <li>Priority support</li>
+      </ul>
+      <div class="pricing-action">
+        <a href="#waitlist" class="btn-lg btn-fill">Join Waitlist</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Pricing -->
-  <section class="pricing" id="pricing">
-    <h2>Start free. Scale when you need to.</h2>
-    <p>Local agent is free forever. Cloud features for teams.</p>
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <div class="tier">Developer</div>
-        <div class="price">Free</div>
-        <div class="price-sub">forever</div>
-        <ul>
-          <li>Full local proxy & policy enforcement</li>
-          <li>Agent identity & RBAC</li>
-          <li>Risk scoring (local heuristics)</li>
-          <li>Cryptographic audit trail</li>
-          <li>Human approval flow</li>
-          <li>Local dashboard</li>
-        </ul>
-        <a href="#get-started" class="btn btn-ghost" style="width: 100%; justify-content: center;">Get Started</a>
+<!-- ===== CTA ===== -->
+<section class="cta" id="cta">
+  <h2>Secure your agents.<br><em>Today.</em></h2>
+  <p>One command. Zero config. Data never leaves your machine.</p>
+  <div style="max-width:460px;margin:0 auto;">
+    <div class="term" style="transform:none;">
+      <div class="term-chrome">
+        <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
       </div>
-      <div class="pricing-card featured">
-        <div class="tier">Team</div>
-        <div class="price">$49<span style="font-size: 1rem; font-weight: 500;">/seat/mo</span></div>
-        <div class="price-sub">billed monthly</div>
-        <ul>
-          <li>Everything in Developer</li>
-          <li>Cloud dashboard & centralized policy</li>
-          <li>Aggregated audit logs across machines</li>
-          <li>AI-powered risk scoring (dedicated model)</li>
-          <li>Push notification approvals</li>
-          <li>Team RBAC & SSO</li>
-        </ul>
-        <a href="#waitlist" class="btn btn-primary" style="width: 100%; justify-content: center;">Join Waitlist</a>
+      <div class="term-body" style="min-height:auto;line-height:2;">
+        <div><span class="p">$</span> <span class="c">brew install quint-security/tap/quint</span></div>
+        <div><span class="p">$</span> <span class="c">quint init</span></div>
+        <div><span class="ok">&#10003; Quint is protecting your agents.</span></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CTA -->
-  <section class="cta" id="get-started">
-    <h2>Secure your AI agents today</h2>
-    <p>One command. Zero config. Your data stays yours.</p>
-    <div class="terminal" style="max-width: 500px; margin: 2rem auto 0;">
-      <div class="terminal-bar">
-        <div class="terminal-dot"></div>
-        <div class="terminal-dot"></div>
-        <div class="terminal-dot"></div>
-      </div>
-      <div class="terminal-body">
-        <div><span class="prompt">$</span> <span class="cmd">brew install quint-security/tap/quint</span></div>
-        <div><span class="prompt">$</span> <span class="cmd">quint init</span></div>
-        <div><span class="output">✓ Quint is protecting your agents.</span></div>
-      </div>
-    </div>
-  </section>
+<!-- ===== WAITLIST ===== -->
+<section class="waitlist" id="waitlist">
+  <form class="wl-form" id="wf" onsubmit="return wl(event)">
+    <input type="email" placeholder="you@company.com" required>
+    <button type="submit">Join waitlist</button>
+  </form>
+  <p class="wl-msg" id="wm">&#10003; You're on the list.</p>
+</section>
 
-  <!-- Waitlist -->
-  <section id="waitlist" style="max-width: 500px; margin: 0 auto; padding: 2rem 2rem 6rem; text-align: center;">
-    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Join the Team tier waitlist</h3>
-    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Be first to get cloud dashboard, AI risk scoring, and team features.</p>
-    <form id="waitlist-form" style="display: flex; gap: 0.5rem;" onsubmit="return handleWaitlist(event)">
-      <input type="email" placeholder="you@company.com" required
-        style="flex: 1; padding: 0.65rem 1rem; border-radius: 8px; border: 1px solid var(--border);
-        background: var(--surface); color: var(--text); font-size: 0.9rem; outline: none;">
-      <button type="submit" class="btn btn-primary">Notify me</button>
-    </form>
-    <p id="waitlist-msg" style="color: var(--green); font-size: 0.85rem; margin-top: 0.75rem; display: none;">
-      ✓ You're on the list. We'll be in touch.
-    </p>
-  </section>
+<footer>
+  <span>&copy; 2026 Quint Security</span>
+  <div class="footer-links">
+    <a href="https://github.com/Quint-Security">GitHub</a>
+    <a href="mailto:hello@quint.security">Contact</a>
+  </div>
+</footer>
 
-  <footer>
-    <p>
-      © 2026 Quint Security · 
-      <a href="https://github.com/Quint-Security">GitHub</a> · 
-      <a href="mailto:hello@quint.security">Contact</a>
-    </p>
-  </footer>
+<script>
+// Terminal animation
+const L=[
+  {t:'cmd',s:'$ brew install quint-security/tap/quint'},
+  {t:'cmd',s:'$ quint init',d:700},
+  {t:'out',s:'<span class="ok">&#10003;</span> Detected Claude Code with 3 MCP servers',d:400},
+  {t:'out',s:'<span class="ok">&#10003;</span> Generated Ed25519 signing keypair',d:250},
+  {t:'out',s:'<span class="ok">&#10003;</span> Created policy (role: balanced)',d:250},
+  {t:'out',s:'<span class="ok">&#10003;</span> Wrapped 3 servers &mdash; Quint is active',d:250},
+  {t:'gap'},
+  {t:'cmd',s:'$ quint status',d:900},
+  {t:'out',s:'<span class="ok">&#10003;</span> <span class="c">read_file</span> <span class="o">&rarr; allowed</span> <span class="score score-lo">risk 8</span>',d:350},
+  {t:'out',s:'<span class="ok">&#10003;</span> <span class="c">list_directory</span> <span class="o">&rarr; allowed</span> <span class="score score-lo">risk 5</span>',d:200},
+  {t:'out',s:'<span class="no">&#10007;</span> <span class="c">execute_command</span> <span class="o">&rarr; scope denied</span> <span class="score score-hi">risk 72</span>',d:200},
+  {t:'out',s:'<span class="warn">&#9888;</span> <span class="c">write_file /etc/hosts</span> <span class="o">&rarr; approval pending</span> <span class="score score-md">risk 61</span>',d:200},
+];
 
-  <script>
-    function handleWaitlist(e) {
-      e.preventDefault();
-      // TODO: wire to actual backend/Notion/Google Sheet
-      document.getElementById('waitlist-form').style.display = 'none';
-      document.getElementById('waitlist-msg').style.display = 'block';
-      return false;
-    }
+const el=document.getElementById('t');
+let delay=0;
+L.forEach((l,i)=>{
+  delay+=l.d||150;
+  if(l.t==='gap'){delay+=400;return}
+  setTimeout(()=>{
+    const d=document.createElement('div');
+    d.className='line';
+    d.innerHTML=l.t==='cmd'?`<span class="p">${l.s[0]}</span> <span class="c">${l.s.slice(2)}</span>`:l.s;
+    el.appendChild(d);
+    el.querySelectorAll('.cursor').forEach(c=>c.remove());
+    if(i===L.length-1){const c=document.createElement('span');c.className='cursor';d.appendChild(c)}
+  },delay);
+});
 
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(a.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-  </script>
+// Waitlist
+function wl(e){e.preventDefault();document.getElementById('wf').style.display='none';document.getElementById('wm').style.display='block';return false}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
+</script>
 
 </body>
 </html>
