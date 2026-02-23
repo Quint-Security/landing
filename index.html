@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quint — Security for AI Agents</title>
+  <meta name="description" content="The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did.">
+  <meta property="og:title" content="Quint — Security for AI Agents">
+  <meta property="og:description" content="The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09090b;
+      --surface: #111113;
+      --surface-2: #18181b;
+      --border: #27272a;
+      --text: #fafafa;
+      --muted: #a1a1aa;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(9, 9, 11, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .logo-icon {
+      width: 28px; height: 28px; background: var(--accent);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+    }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.5rem; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent); color: white;
+    }
+    .btn-primary:hover { background: #2563eb; text-decoration: none; }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); text-decoration: none; }
+
+    /* Hero */
+    .hero {
+      padding: 10rem 2rem 6rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.35rem 1rem; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1.1; margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.2rem; color: var(--muted);
+      max-width: 600px; margin: 0 auto 2.5rem;
+    }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* Terminal */
+    .terminal {
+      max-width: 680px; margin: 4rem auto 0;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      text-align: left; position: relative;
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+    }
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .terminal-dot:nth-child(1) { background: #ef4444; }
+    .terminal-dot:nth-child(2) { background: #eab308; }
+    .terminal-dot:nth-child(3) { background: #22c55e; }
+    .terminal-body {
+      padding: 1.25rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem; line-height: 1.8;
+    }
+    .terminal-body .prompt { color: var(--green); }
+    .terminal-body .cmd { color: var(--text); }
+    .terminal-body .output { color: var(--muted); }
+    .terminal-body .denied { color: var(--red); }
+    .terminal-body .allowed { color: var(--green); }
+    .terminal-body .flag { color: var(--yellow); }
+
+    /* Flow diagram */
+    .flow {
+      max-width: 900px; margin: 6rem auto 0;
+      padding: 0 2rem;
+    }
+    .flow-diagram {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem; line-height: 1.8;
+      color: var(--muted);
+      overflow-x: auto;
+    }
+    .flow-diagram .highlight { color: var(--accent); font-weight: 600; }
+    .flow-diagram .label { color: var(--text); }
+
+    /* Features */
+    .features {
+      max-width: 1200px; margin: 0 auto;
+      padding: 8rem 2rem;
+    }
+    .features-header {
+      text-align: center; margin-bottom: 4rem;
+    }
+    .features-header h2 {
+      font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .features-header p { color: var(--muted); font-size: 1.1rem; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: #3f3f46; }
+    .feature-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 1rem;
+      background: var(--surface-2); border: 1px solid var(--border);
+    }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* How it works */
+    .how {
+      max-width: 1200px; margin: 0 auto;
+      padding: 4rem 2rem 8rem;
+    }
+    .how h2 {
+      text-align: center; font-size: 2.5rem; font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 4rem;
+    }
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .step {
+      text-align: center; padding: 2rem;
+    }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--accent-glow); border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: var(--accent);
+      margin: 0 auto 1.25rem;
+    }
+    .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .step p { color: var(--muted); font-size: 0.9rem; }
+
+    /* Pricing */
+    .pricing {
+      max-width: 1000px; margin: 0 auto;
+      padding: 4rem 2rem 8rem;
+    }
+    .pricing h2 {
+      text-align: center; font-size: 2.5rem; font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .pricing > p {
+      text-align: center; color: var(--muted); font-size: 1.1rem;
+      margin-bottom: 4rem;
+    }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .pricing-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2.5rem;
+    }
+    .pricing-card.featured { border-color: var(--accent); }
+    .pricing-card .tier {
+      font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.5rem;
+    }
+    .pricing-card.featured .tier { color: var(--accent); }
+    .pricing-card .price {
+      font-size: 2.5rem; font-weight: 800; margin-bottom: 0.25rem;
+    }
+    .pricing-card .price-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .pricing-card ul { list-style: none; margin-bottom: 2rem; }
+    .pricing-card li {
+      padding: 0.4rem 0; color: var(--muted); font-size: 0.9rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .pricing-card li::before { content: '✓'; color: var(--green); font-weight: 600; }
+
+    /* CTA */
+    .cta {
+      text-align: center; padding: 6rem 2rem 8rem;
+      position: relative;
+    }
+    .cta::before {
+      content: '';
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta h2 {
+      font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 1rem; position: relative;
+    }
+    .cta p {
+      color: var(--muted); font-size: 1.1rem;
+      max-width: 500px; margin: 0 auto 2rem;
+      position: relative;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 8rem 1.5rem 4rem; }
+      .features, .how, .pricing { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="logo">
+        <div class="logo-icon">Q</div>
+        Quint
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="https://github.com/Quint-Security" target="_blank">GitHub</a>
+        <a href="https://docs.quint.security" class="btn btn-ghost" style="padding: 0.4rem 1rem;">Docs</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Now in public beta
+    </div>
+    <h1>Security for<br><span>AI Agents</span></h1>
+    <p>The first RBAC and risk model for autonomous AI agents. Control what they do. Prove what they did. Data never leaves your machine.</p>
+    <div class="hero-buttons">
+      <a href="#get-started" class="btn btn-primary">Get Started →</a>
+      <a href="https://github.com/Quint-Security/proxy" target="_blank" class="btn btn-ghost">View on GitHub</a>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> <span class="cmd">brew install quint-security/tap/quint</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">quint init</span></div>
+        <div><span class="output">✓ Detected Claude Code with 3 MCP servers</span></div>
+        <div><span class="output">✓ Generated Ed25519 keypair</span></div>
+        <div><span class="output">✓ Created policy (default: balanced)</span></div>
+        <div><span class="output">✓ Wrapped 3 servers — Quint is active</span></div>
+        <div style="margin-top: 0.5rem;"><span class="prompt">$</span> <span class="cmd">quint status</span></div>
+        <div><span class="allowed">✓ read_file</span> <span class="output">→ allowed (risk: 12)</span></div>
+        <div><span class="allowed">✓ list_dir</span> <span class="output">→ allowed (risk: 8)</span></div>
+        <div><span class="denied">✗ execute_command</span> <span class="output">→ denied by policy</span></div>
+        <div><span class="flag">⚠ write_file /etc/passwd</span> <span class="output">→ flagged (risk: 91)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Flow -->
+  <div class="flow">
+    <div class="flow-diagram">
+      <pre>
+<span class="label">  Your AI Agent</span>        <span class="highlight">Quint Proxy</span>          <span class="label">MCP Server</span>
+  ┌──────────┐        ┌──────────────┐       ┌──────────┐
+  │ Claude   │───────▶│ <span class="highlight">Intercept</span>    │──────▶│ filesystem│
+  │ Cursor   │        │ <span class="highlight">Enforce RBAC</span> │       │ git      │
+  │ Cline    │◀───────│ <span class="highlight">Score Risk</span>  │◀──────│ memory   │
+  │ OpenClaw │        │ <span class="highlight">Sign & Audit</span>│       │ APIs     │
+  └──────────┘        └──────────────┘       └──────────┘
+                             │
+                      <span class="highlight">Data never leaves</span>
+                      <span class="highlight">your machine.</span></pre>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="features-header">
+      <h2>Everything you need to secure AI agents</h2>
+      <p>One binary. Zero config. Works with any MCP-compatible agent.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Policy Enforcement</h3>
+        <p>Allow/deny rules per server, per tool, with glob patterns. Fail-closed by default — no policy match means deny.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Agent Identity & RBAC</h3>
+        <p>Each agent gets its own identity and scoped permissions. Reader, writer, admin — enforce least-privilege access to every tool.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Risk Scoring</h3>
+        <p>Every tool call scored 0–100 in real time. High-risk actions get flagged or auto-blocked. Configurable thresholds per server.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✍️</div>
+        <h3>Cryptographic Audit Trail</h3>
+        <p>Every action signed with Ed25519, hash-chained in SQLite. Tamper-evident. Export the log — anyone can verify what happened.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👆</div>
+        <h3>Human Approval Flow</h3>
+        <p>High-risk calls pause for human review. Approve or deny from the dashboard. Decisions are cryptographically signed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Local-First</h3>
+        <p>Everything runs on your machine. No data sent to any cloud. No account required. The agent doesn't even know Quint exists.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how" id="how">
+    <h2>Up and running in 30 seconds</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Install</h3>
+        <p><code>brew install quint</code> — single binary, no dependencies, no runtime.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Init</h3>
+        <p><code>quint init</code> — auto-detects your AI tools, generates keys, wraps your MCP servers.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Done</h3>
+        <p>Every agent action is now policy-checked, risk-scored, signed, and logged. Open <code>quint dashboard</code> to see it all.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <h2>Start free. Scale when you need to.</h2>
+    <p>Local agent is free forever. Cloud features for teams.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="tier">Developer</div>
+        <div class="price">Free</div>
+        <div class="price-sub">forever</div>
+        <ul>
+          <li>Full local proxy & policy enforcement</li>
+          <li>Agent identity & RBAC</li>
+          <li>Risk scoring (local heuristics)</li>
+          <li>Cryptographic audit trail</li>
+          <li>Human approval flow</li>
+          <li>Local dashboard</li>
+        </ul>
+        <a href="#get-started" class="btn btn-ghost" style="width: 100%; justify-content: center;">Get Started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="tier">Team</div>
+        <div class="price">$49<span style="font-size: 1rem; font-weight: 500;">/seat/mo</span></div>
+        <div class="price-sub">billed monthly</div>
+        <ul>
+          <li>Everything in Developer</li>
+          <li>Cloud dashboard & centralized policy</li>
+          <li>Aggregated audit logs across machines</li>
+          <li>AI-powered risk scoring (dedicated model)</li>
+          <li>Push notification approvals</li>
+          <li>Team RBAC & SSO</li>
+        </ul>
+        <a href="#waitlist" class="btn btn-primary" style="width: 100%; justify-content: center;">Join Waitlist</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="get-started">
+    <h2>Secure your AI agents today</h2>
+    <p>One command. Zero config. Your data stays yours.</p>
+    <div class="terminal" style="max-width: 500px; margin: 2rem auto 0;">
+      <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> <span class="cmd">brew install quint-security/tap/quint</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">quint init</span></div>
+        <div><span class="output">✓ Quint is protecting your agents.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Waitlist -->
+  <section id="waitlist" style="max-width: 500px; margin: 0 auto; padding: 2rem 2rem 6rem; text-align: center;">
+    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Join the Team tier waitlist</h3>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Be first to get cloud dashboard, AI risk scoring, and team features.</p>
+    <form id="waitlist-form" style="display: flex; gap: 0.5rem;" onsubmit="return handleWaitlist(event)">
+      <input type="email" placeholder="you@company.com" required
+        style="flex: 1; padding: 0.65rem 1rem; border-radius: 8px; border: 1px solid var(--border);
+        background: var(--surface); color: var(--text); font-size: 0.9rem; outline: none;">
+      <button type="submit" class="btn btn-primary">Notify me</button>
+    </form>
+    <p id="waitlist-msg" style="color: var(--green); font-size: 0.85rem; margin-top: 0.75rem; display: none;">
+      ✓ You're on the list. We'll be in touch.
+    </p>
+  </section>
+
+  <footer>
+    <p>
+      © 2026 Quint Security · 
+      <a href="https://github.com/Quint-Security">GitHub</a> · 
+      <a href="mailto:hello@quint.security">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    function handleWaitlist(e) {
+      e.preventDefault();
+      // TODO: wire to actual backend/Notion/Google Sheet
+      document.getElementById('waitlist-form').style.display = 'none';
+      document.getElementById('waitlist-msg').style.display = 'block';
+      return false;
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+
+</body>
+</html>
