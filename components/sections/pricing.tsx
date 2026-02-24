@@ -51,14 +51,14 @@ export function Pricing() {
             <Card
               key={tier.name}
               className={cn(
-                "bg-quint-surface border-white/[0.04]",
-                tier.highlight && "border-white/20"
+                "bg-quint-surface border-quint-line",
+                tier.highlight && "border-quint-line-hover"
               )}
             >
               <CardHeader>
                 <div className={cn(
                   "font-mono text-xs tracking-[0.15em] uppercase mb-4",
-                  tier.highlight ? "text-white" : "text-muted-foreground"
+                  tier.highlight ? "text-foreground" : "text-muted-foreground"
                 )}>
                   {tier.name}
                 </div>
@@ -76,11 +76,11 @@ export function Pricing() {
                   {tier.features.map((feature) => (
                     <li
                       key={feature}
-                      className="flex items-center gap-3 text-sm text-muted-foreground py-2.5 border-b border-white/[0.03] last:border-none"
+                      className="flex items-center gap-3 text-sm text-muted-foreground py-2.5 border-b border-quint-line last:border-none"
                     >
                       <span className={cn(
                         "w-1.5 h-1.5 rounded-full shrink-0",
-                        tier.highlight ? "bg-white" : "bg-white/20"
+                        tier.highlight ? "bg-foreground" : "bg-foreground/20"
                       )} />
                       {feature}
                     </li>

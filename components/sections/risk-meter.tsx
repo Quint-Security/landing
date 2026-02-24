@@ -23,7 +23,7 @@ const levelColors: Record<string, { bar: string; text: string; badge: string }> 
 function MeterBar({ score, level, visible }: { score: number; level: string; visible: boolean }) {
   const colors = levelColors[level]
   return (
-    <div className="flex-1 h-7 bg-quint-surface-2 rounded-md overflow-hidden border border-white/[0.04]">
+    <div className="flex-1 h-7 bg-quint-surface-2 rounded-md overflow-hidden border border-quint-line">
       <div
         className={`h-full rounded-md bg-gradient-to-r ${colors.bar} transition-all duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)]`}
         style={{ width: visible ? `${score}%` : "0%" }}

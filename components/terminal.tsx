@@ -45,12 +45,12 @@ export function Terminal({ lines, title = "quint — terminal", animated = false
 
   return (
     <div className={cn(
-      "rounded-xl border border-white/[0.06] bg-quint-surface overflow-hidden",
+      "rounded-xl border border-quint-dim bg-quint-surface overflow-hidden",
       "shadow-[0_40px_80px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.02)_inset]",
       className
     )}>
       {/* Chrome bar */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.04] bg-white/[0.01]">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-quint-line bg-quint-dim">
         <div className="w-3 h-3 rounded-full bg-[#ff5f57] opacity-70" />
         <div className="w-3 h-3 rounded-full bg-[#febc2e] opacity-70" />
         <div className="w-3 h-3 rounded-full bg-[#28c840] opacity-70" />

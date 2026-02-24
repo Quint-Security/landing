@@ -40,7 +40,7 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
   }, [target])
 
   return (
-    <div ref={ref} className="font-sans text-5xl font-light italic text-white leading-none mb-2">
+    <div ref={ref} className="font-sans text-5xl font-light italic text-foreground leading-none mb-2">
       {count}{suffix}
     </div>
   )
@@ -48,7 +48,7 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
 
 export function Stats() {
   return (
-    <div className="max-w-[1000px] mx-auto px-6 md:px-12 py-16 border-y border-white/[0.04]">
+    <div className="max-w-[1000px] mx-auto px-6 md:px-12 py-16 border-y border-quint-line">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
         {stats.map((stat, i) => (
           <ScrollReveal key={stat.label} delay={i * 0.1}>

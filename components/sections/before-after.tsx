@@ -5,10 +5,10 @@ import { SectionHeader } from "@/components/section-header"
 import { ScrollReveal } from "@/components/scroll-reveal"
 
 const withoutQuint = [
-  { text: '{"jsonrpc":"2.0","method":"tools/call",', cls: "text-white/70" },
-  { text: ' "params":{"name":"write_file",', cls: "text-white/70" },
-  { text: '  "arguments":{"path":"/etc/hosts",', cls: "text-white/70" },
-  { text: '   "content":"127.0.0.1 evil.com"}}}', cls: "text-white/70" },
+  { text: '{"jsonrpc":"2.0","method":"tools/call",', cls: "text-foreground/70" },
+  { text: ' "params":{"name":"write_file",', cls: "text-foreground/70" },
+  { text: '  "arguments":{"path":"/etc/hosts",', cls: "text-foreground/70" },
+  { text: '   "content":"127.0.0.1 evil.com"}}}', cls: "text-foreground/70" },
   { text: "", cls: "" },
   { text: "// No visibility. No control.", cls: "text-quint-red" },
   { text: "// Did it execute? Who knows.", cls: "text-quint-red" },
@@ -38,21 +38,21 @@ function CodePanel({
   return (
     <div
       className={`rounded-xl border overflow-hidden bg-quint-surface flex flex-col ${
-        variant === "before" ? "border-quint-red/20" : "border-white/10"
+        variant === "before" ? "border-quint-red/20" : "border-quint-line-hover"
       }`}
     >
       <div
-        className={`px-4 py-3 border-b border-white/[0.04] font-mono text-xs tracking-widest uppercase ${
+        className={`px-4 py-3 border-b border-quint-line font-mono text-xs tracking-widest uppercase ${
           variant === "before"
             ? "text-quint-red bg-quint-red/[0.04]"
-            : "text-white bg-white/[0.04]"
+            : "text-foreground bg-quint-dim"
         }`}
       >
         {title}
       </div>
       <pre className="p-5 font-mono text-xs leading-[1.9] overflow-x-auto whitespace-pre flex-1">
         {lines.map((line, i) => (
-          <div key={i} className={line.cls || "text-white/70"}>
+          <div key={i} className={line.cls || "text-foreground/70"}>
             {line.text || "\u00A0"}
           </div>
         ))}

@@ -12,9 +12,9 @@ const links = [
 
 export function Nav() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[rgba(5,5,8,0.75)] border-b border-white/[0.04]">
+    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/75 border-b border-quint-line">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between h-[60px]">
-        <Link href="/" className="font-mono text-sm font-medium tracking-[0.15em] uppercase text-white">
+        <Link href="/" className="font-mono text-sm font-medium tracking-[0.15em] uppercase text-foreground">
           <span className="font-bold">Q</span>UINT
         </Link>
 

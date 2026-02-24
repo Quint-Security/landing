@@ -55,8 +55,46 @@
   --color-quint-surface: #0A0A0A;
   --color-quint-surface-2: #141414;
 
+  /* Semantic border/glow tokens */
+  --color-quint-line: rgba(255, 255, 255, 0.04);
+  --color-quint-line-hover: rgba(255, 255, 255, 0.15);
+  --color-quint-dim: rgba(255, 255, 255, 0.06);
+
   --font-sans: 'Switzer', -apple-system, system-ui, sans-serif;
   --font-mono: 'DM Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+/* ── Light theme overrides ── */
+html:not(.dark) {
+  --color-background: #FFFFFF;
+  --color-foreground: #1C1C1E;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #1C1C1E;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #1C1C1E;
+  --color-primary: #1C1C1E;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F2F2F7;
+  --color-secondary-foreground: #48484A;
+  --color-muted: #F2F2F7;
+  --color-muted-foreground: #8E8E93;
+  --color-accent: #E5E5EA;
+  --color-accent-foreground: #1C1C1E;
+  --color-destructive: #D42020;
+  --color-destructive-foreground: #FFFFFF;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-input: rgba(0, 0, 0, 0.08);
+  --color-ring: #1C1C1E;
+
+  --color-quint-green: #00896A;
+  --color-quint-amber: #B87A00;
+  --color-quint-red: #D42020;
+  --color-quint-blue: #0068A8;
+  --color-quint-surface: #F2F2F7;
+  --color-quint-surface-2: #E5E5EA;
+  --color-quint-line: rgba(0, 0, 0, 0.06);
+  --color-quint-line-hover: rgba(0, 0, 0, 0.15);
+  --color-quint-dim: rgba(0, 0, 0, 0.06);
 }
 
 @layer base {
@@ -71,6 +109,7 @@
     background: var(--color-background);
     color: var(--color-foreground);
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 

@@ -22,8 +22,8 @@ export function Capabilities() {
         <div className="space-y-0">
           {capabilities.map((cap, i) => (
             <ScrollReveal key={cap.num} delay={i * 0.08}>
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-2 md:gap-8 py-10 border-b border-white/[0.04] last:border-none">
-                <div className="font-mono text-xs text-white tracking-[0.12em] uppercase pt-1">
+              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-2 md:gap-8 py-10 border-b border-quint-line last:border-none">
+                <div className="font-mono text-xs text-foreground tracking-[0.12em] uppercase pt-1">
                   {cap.num} — {cap.label}
                 </div>
                 <div>

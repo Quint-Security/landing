@@ -16,11 +16,11 @@ export function Setup() {
         {steps.map((step, i) => (
           <ScrollReveal key={step.num} delay={i * 0.1}>
             <div>
-              <div className="font-sans text-6xl font-light italic text-white/20 leading-none mb-4">
+              <div className="font-sans text-6xl font-light italic text-foreground/20 leading-none mb-4">
                 {step.num}
               </div>
               <h3 className="font-sans text-xl font-light mb-3">{step.title}</h3>
-              <code className="font-mono text-xs text-white bg-white/[0.05] border border-white/10 px-2.5 py-1 rounded-md inline-block mb-3">
+              <code className="font-mono text-xs text-foreground bg-quint-dim border border-quint-line-hover px-2.5 py-1 rounded-md inline-block mb-3">
                 {step.code}
               </code>
               <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>

@@ -50,14 +50,14 @@ export function CTA() {
               type="email"
               placeholder="you@company.com"
               required
-              className="flex-1 h-12 rounded-xl bg-quint-surface border-white/[0.08] text-white placeholder:text-muted-foreground focus-visible:border-white focus-visible:ring-white/20"
+              className="flex-1 h-12 rounded-xl bg-quint-surface border-quint-line text-foreground placeholder:text-muted-foreground focus-visible:border-foreground focus-visible:ring-foreground/20"
             />
             <Button type="submit" className="h-12 px-6 rounded-xl font-semibold whitespace-nowrap">
               Join waitlist
             </Button>
           </form>
         ) : (
-          <p className="text-center text-white text-sm font-medium">
+          <p className="text-center text-foreground text-sm font-medium">
             <span className="text-quint-green">{"\u2713"}</span> You&apos;re on the list.
           </p>
         )}

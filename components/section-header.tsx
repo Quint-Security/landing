@@ -17,7 +17,7 @@ export function SectionHeader({ title, label }: SectionHeaderProps) {
           {label}
         </span>
       </div>
-      <Separator className="mb-10 bg-white/[0.04]" />
+      <Separator className="mb-10 bg-quint-line" />
     </ScrollReveal>
   )
 }

@@ -37,17 +37,17 @@ export function Testimonials() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {testimonials.map((t, i) => (
           <ScrollReveal key={t.name} delay={i * 0.08}>
-            <Card className="bg-quint-surface border-white/[0.04] hover:border-white/[0.15] transition-colors">
+            <Card className="bg-quint-surface border-quint-line hover:border-quint-line-hover transition-colors">
               <CardContent className="pt-6">
-                <blockquote className="font-sans text-base italic leading-relaxed text-white mb-6">
+                <blockquote className="font-sans text-base italic leading-relaxed text-foreground mb-6">
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-quint-surface-2 border border-white/[0.08] flex items-center justify-center font-mono text-xs text-white font-medium">
+                  <div className="w-9 h-9 rounded-full bg-quint-surface-2 border border-quint-line flex items-center justify-center font-mono text-xs text-foreground font-medium">
                     {t.initials}
                   </div>
                   <div className="text-sm">
-                    <div className="font-semibold text-white">{t.name}</div>
+                    <div className="font-semibold text-foreground">{t.name}</div>
                     <div className="text-muted-foreground">{t.role}</div>
                   </div>
                 </div>

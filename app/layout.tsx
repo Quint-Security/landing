@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { ThemeToggle } from "@/components/theme-toggle"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -12,8 +13,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* Prevent flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('quint-theme');if(t==='light')document.documentElement.classList.remove('dark')}catch(e){}})()`,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -27,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans antialiased">
         {children}
+        <ThemeToggle />
       </body>
     </html>
   )

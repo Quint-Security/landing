@@ -30,16 +30,16 @@ export function Pipeline() {
                     <button
                       className={cn(
                         "px-4 py-3 font-mono text-xs border rounded-lg bg-quint-surface transition-all whitespace-nowrap",
-                        "hover:border-white hover:text-white hover:bg-white/[0.05] hover:shadow-[0_0_20px_rgba(255,255,255,0.08)]",
+                        "hover:border-foreground hover:text-foreground hover:bg-quint-dim hover:shadow-[0_0_20px_rgba(255,255,255,0.08)]",
                         stage.active
-                          ? "border-white/20 text-white/80"
-                          : "border-white/[0.08] text-muted-foreground"
+                          ? "border-quint-line-hover text-foreground/80"
+                          : "border-quint-line text-muted-foreground"
                       )}
                     >
                       {stage.name}
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-quint-surface-2 border-white/20 text-muted-foreground font-sans">
+                  <TooltipContent side="top" className="bg-quint-surface-2 border-quint-line-hover text-muted-foreground font-sans">
                     {stage.desc}
                   </TooltipContent>
                 </Tooltip>

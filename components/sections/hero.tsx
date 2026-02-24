@@ -42,7 +42,7 @@ export function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <Badge variant="outline" className="mb-8 font-mono text-xs tracking-widest uppercase border-white/20 text-muted-foreground">
+          <Badge variant="outline" className="mb-8 font-mono text-xs tracking-widest uppercase border-quint-line-hover text-muted-foreground">
             Public Beta
           </Badge>
         </motion.div>
