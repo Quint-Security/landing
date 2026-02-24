@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils"
 
 const stages = [
   { name: "Agent", desc: "Claude Code, Cursor, Cline, or any MCP client", active: false },
-  { name: "Identity", desc: "Bearer token \u2192 agent lookup \u2192 scoped identity", active: true },
+  { name: "Identity", desc: "Bearer token → agent lookup → scoped identity", active: true },
   { name: "Policy", desc: "Glob-match server + tool rules. First match wins.", active: true },
   { name: "Scope", desc: "Check agent scopes: read, write, execute, admin", active: true },
-  { name: "Risk", desc: "Score 0\u2013100. Flag at 60. Deny at 90. Configurable.", active: true },
+  { name: "Risk", desc: "Score 0–100. Flag at 60. Deny at 90. Configurable.", active: true },
   { name: "Approval", desc: "Flagged calls pause for human review. Signed decisions.", active: true },
-  { name: "MCP Server", desc: "Filesystem, git, APIs \u2014 the actual tool execution", active: false },
+  { name: "MCP Server", desc: "Filesystem, git, APIs — the actual tool execution", active: false },
 ]
 
 export function Pipeline() {
@@ -44,7 +44,7 @@ export function Pipeline() {
                   </TooltipContent>
                 </Tooltip>
                 {i < stages.length - 1 && (
-                  <span className="text-muted-foreground mx-1 md:mx-2 text-sm hidden md:block">\u2192</span>
+                  <span className="text-muted-foreground mx-1 md:mx-2 text-sm hidden md:block">{"→"}</span>
                 )}
               </div>
             ))}
