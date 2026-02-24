@@ -1,6 +1,5 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SectionHeader } from "@/components/section-header"
 import { ScrollReveal } from "@/components/scroll-reveal"
@@ -17,25 +16,48 @@ const withoutQuint = [
 ]
 
 const withQuintLines = [
-  { text: "\u2713 intercepted  write_file /etc/hosts", cls: "text-quint-green" },
+  { text: "✓ intercepted  write_file /etc/hosts", cls: "text-quint-green" },
   { text: "  agent:     deploy-bot (tools:execute)", cls: "text-muted-foreground" },
   { text: "  policy:    allowed by server rule", cls: "text-quint-green" },
-  { text: "  scope:     tools:execute \u2713", cls: "text-quint-green" },
-  { text: "  risk:      61 (HIGH) \u2014 flagged", cls: "text-quint-amber" },
-  { text: "\u26A0 approval required  id: 89bf0394", cls: "text-quint-amber" },
+  { text: "  scope:     tools:execute ✓", cls: "text-quint-green" },
+  { text: "  risk:      61 (HIGH) — flagged", cls: "text-quint-amber" },
+  { text: "⚠ approval required  id: 89bf0394", cls: "text-quint-amber" },
   { text: "  signed:    ed25519:a4f2c8...3b91", cls: "text-muted-foreground" },
-  { text: "  chain:     sha256:prev_hash \u2713", cls: "text-muted-foreground" },
+  { text: "  chain:     sha256:prev_hash ✓", cls: "text-muted-foreground" },
 ]
 
-function CodeBlock({ lines }: { lines: { text: string; cls: string }[] }) {
+function CodePanel({
+  title,
+  lines,
+  variant,
+}: {
+  title: string
+  lines: { text: string; cls: string }[]
+  variant: "before" | "after"
+}) {
   return (
-    <pre className="p-5 font-mono text-xs leading-[1.9] overflow-x-auto whitespace-pre-wrap">
-      {lines.map((line, i) => (
-        <div key={i} className={line.cls || "text-white/70"}>
-          {line.text || "\u00A0"}
-        </div>
-      ))}
-    </pre>
+    <div
+      className={`rounded-xl border overflow-hidden bg-quint-surface flex flex-col ${
+        variant === "before" ? "border-quint-red/20" : "border-white/10"
+      }`}
+    >
+      <div
+        className={`px-4 py-3 border-b border-white/[0.04] font-mono text-xs tracking-widest uppercase ${
+          variant === "before"
+            ? "text-quint-red bg-quint-red/[0.04]"
+            : "text-white bg-white/[0.04]"
+        }`}
+      >
+        {title}
+      </div>
+      <pre className="p-5 font-mono text-xs leading-[1.9] overflow-x-auto whitespace-pre flex-1">
+        {lines.map((line, i) => (
+          <div key={i} className={line.cls || "text-white/70"}>
+            {line.text || "\u00A0"}
+          </div>
+        ))}
+      </pre>
+    </div>
   )
 }
 
@@ -44,34 +66,13 @@ export function BeforeAfter() {
     <section className="max-w-[1000px] mx-auto px-6 md:px-12 py-8 pb-24">
       <SectionHeader title="Before & after" label="visibility" />
 
-      {/* Desktop: side by side */}
-      <div className="hidden md:grid grid-cols-2 gap-4">
-        <ScrollReveal variant="scale-up">
-          <Card className="border-quint-red/20 bg-quint-surface">
-            <CardHeader className="border-b border-white/[0.04] bg-quint-red/[0.04]">
-              <CardTitle className="font-mono text-xs tracking-widest uppercase text-quint-red font-normal">
-                Without Quint
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <CodeBlock lines={withoutQuint} />
-            </CardContent>
-          </Card>
-        </ScrollReveal>
-
-        <ScrollReveal variant="scale-up" delay={0.1}>
-          <Card className="border-white/10 bg-quint-surface">
-            <CardHeader className="border-b border-white/[0.04] bg-white/[0.04]">
-              <CardTitle className="font-mono text-xs tracking-widest uppercase text-white font-normal">
-                With Quint
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <CodeBlock lines={withQuintLines} />
-            </CardContent>
-          </Card>
-        </ScrollReveal>
-      </div>
+      {/* Desktop: side by side, equal height */}
+      <ScrollReveal variant="scale-up">
+        <div className="hidden md:grid grid-cols-2 gap-4 items-stretch">
+          <CodePanel title="Without Quint" lines={withoutQuint} variant="before" />
+          <CodePanel title="With Quint" lines={withQuintLines} variant="after" />
+        </div>
+      </ScrollReveal>
 
       {/* Mobile: tabs */}
       <div className="md:hidden">
@@ -82,18 +83,10 @@ export function BeforeAfter() {
               <TabsTrigger value="after" className="flex-1 font-mono text-xs">With Quint</TabsTrigger>
             </TabsList>
             <TabsContent value="before">
-              <Card className="border-quint-red/20 bg-quint-surface">
-                <CardContent className="p-0">
-                  <CodeBlock lines={withoutQuint} />
-                </CardContent>
-              </Card>
+              <CodePanel title="Without Quint" lines={withoutQuint} variant="before" />
             </TabsContent>
             <TabsContent value="after">
-              <Card className="border-white/10 bg-quint-surface">
-                <CardContent className="p-0">
-                  <CodeBlock lines={withQuintLines} />
-                </CardContent>
-              </Card>
+              <CodePanel title="With Quint" lines={withQuintLines} variant="after" />
             </TabsContent>
           </Tabs>
         </ScrollReveal>
