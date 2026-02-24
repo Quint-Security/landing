@@ -323,13 +323,14 @@ footer a{color:var(--ink-4);transition:color 0.2s}footer a:hover{color:var(--ink
 <!-- CAPABILITIES -->
 <section class="dossier" id="capabilities">
   <div class="aurora"></div>
-  <div class="dossier-header sr-blur"><h2>Capabilities</h2><span class="num">01 / 06</span></div>
+  <div class="dossier-header sr-blur"><h2>Capabilities</h2><span class="num">01 / 07</span></div>
   <div class="dossier-item sr" style="--i:0"><div class="dossier-label">01 &mdash; Policy</div><div class="dossier-content"><h3>Deterministic policy enforcement</h3><p>Allow/deny rules per server, per tool, with glob matching. First-match wins. No match means deny. No ambiguity, no exceptions.</p></div></div>
   <div class="dossier-item sr" style="--i:1"><div class="dossier-label">02 &mdash; Identity</div><div class="dossier-content"><h3>Agent identity and RBAC scopes</h3><p>Every agent gets its own API key and scoped permissions. Reader, writer, admin, executor. Enforce least-privilege on every single tool call.</p></div></div>
   <div class="dossier-item sr" style="--i:2"><div class="dossier-label">03 &mdash; Risk</div><div class="dossier-content"><h3>Real-time risk scoring</h3><p>Every call scored 0&ndash;100, weighted on action type, target sensitivity, and behavioral anomaly. Configurable thresholds for flag and deny.</p></div></div>
   <div class="dossier-item sr" style="--i:3"><div class="dossier-label">04 &mdash; Audit</div><div class="dossier-content"><h3>Cryptographic audit chain</h3><p>Ed25519 signatures on every entry. SHA-256 hash chain links them together. Tamper-evident by construction. Export the log &mdash; anyone can verify independently.</p></div></div>
   <div class="dossier-item sr" style="--i:4"><div class="dossier-label">05 &mdash; Approval</div><div class="dossier-content"><h3>Human-in-the-loop approvals</h3><p>High-risk calls pause and wait for human review. Approve or deny from the dashboard or CLI. Decisions are cryptographically signed into the audit trail.</p></div></div>
-  <div class="dossier-item sr" style="--i:5"><div class="dossier-label">06 &mdash; Local</div><div class="dossier-content"><h3>Everything stays on your machine</h3><p>Single Go binary. No cloud. No account. No telemetry. The agent doesn&rsquo;t even know Quint is there. Your data is yours.</p></div></div>
+  <div class="dossier-item sr" style="--i:5"><div class="dossier-label">06 &mdash; Gateway</div><div class="dossier-content"><h3>MCP gateway with OAuth broker</h3><p>One entry point for all your MCP servers. Quint multiplexes stdio and HTTP backends, handles OAuth for GitHub, Notion, and Slack, and injects tokens from an encrypted vault. Agents never see upstream credentials.</p></div></div>
+  <div class="dossier-item sr" style="--i:6"><div class="dossier-label">07 &mdash; Local</div><div class="dossier-content"><h3>Everything stays on your machine</h3><p>Single Go binary. No cloud. No account. No telemetry. The agent doesn&rsquo;t even know Quint is there. Your data is yours.</p></div></div>
 </section>
 
 <!-- INTERACTIVE PIPELINE -->
@@ -352,25 +353,25 @@ footer a{color:var(--ink-4);transition:color 0.2s}footer a:hover{color:var(--ink
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
+<!-- SUPPORTED CLIENTS -->
 <section class="testimonials">
-  <div class="testimonials-header sr-blur"><h2>Early feedback</h2><span class="num">beta users</span></div>
+  <div class="testimonials-header sr-blur"><h2>Works with</h2><span class="num">auto-detected</span></div>
   <div class="testimonial-grid">
     <div class="testimonial sr" style="--i:0">
-      <div class="testimonial-quote">&ldquo;We had zero visibility into what our coding agents were doing. Quint gave us a full audit trail in under a minute. The RBAC scoping alone saved us from a production incident.&rdquo;</div>
-      <div class="testimonial-author"><div class="testimonial-avatar">SR</div><div class="testimonial-info"><div class="testimonial-name">Sarah Rodriguez</div><div class="testimonial-role">Platform Lead, Series B Startup</div></div></div>
+      <div class="testimonial-quote" style="font-size:1.1rem;font-family:var(--mono);text-align:center;padding:1rem 0">Claude Code</div>
+      <div class="testimonial-author"><div class="testimonial-info"><div class="testimonial-role">Anthropic</div></div></div>
     </div>
     <div class="testimonial sr" style="--i:1">
-      <div class="testimonial-quote">&ldquo;The approval flow is the killer feature. Our agents now can&rsquo;t touch production configs without a human sign-off. Cryptographically signed. That&rsquo;s what compliance teams want to hear.&rdquo;</div>
-      <div class="testimonial-author"><div class="testimonial-avatar">MK</div><div class="testimonial-info"><div class="testimonial-name">Marcus Kim</div><div class="testimonial-role">Security Engineer, AI Infrastructure Co</div></div></div>
+      <div class="testimonial-quote" style="font-size:1.1rem;font-family:var(--mono);text-align:center;padding:1rem 0">Cursor</div>
+      <div class="testimonial-author"><div class="testimonial-info"><div class="testimonial-role">Anysphere</div></div></div>
     </div>
     <div class="testimonial sr" style="--i:2">
-      <div class="testimonial-quote">&ldquo;I was routing all my MCP calls through a custom logging proxy. Quint replaced 2,000 lines of my code with a single binary. The risk scoring caught things I didn&rsquo;t even think to check.&rdquo;</div>
-      <div class="testimonial-author"><div class="testimonial-avatar">JT</div><div class="testimonial-info"><div class="testimonial-name">James Thornton</div><div class="testimonial-role">Independent Developer</div></div></div>
+      <div class="testimonial-quote" style="font-size:1.1rem;font-family:var(--mono);text-align:center;padding:1rem 0">Cline</div>
+      <div class="testimonial-author"><div class="testimonial-info"><div class="testimonial-role">VS Code Extension</div></div></div>
     </div>
     <div class="testimonial sr" style="--i:3">
-      <div class="testimonial-quote">&ldquo;Local-first is the only approach that works for us. We can&rsquo;t send tool calls to a third-party cloud. Quint runs entirely on our machines. That&rsquo;s the whole point.&rdquo;</div>
-      <div class="testimonial-author"><div class="testimonial-avatar">AL</div><div class="testimonial-info"><div class="testimonial-name">Anika Liu</div><div class="testimonial-role">VP Engineering, Defense Contractor</div></div></div>
+      <div class="testimonial-quote" style="font-size:1.1rem;font-family:var(--mono);text-align:center;padding:1rem 0">Windsurf</div>
+      <div class="testimonial-author"><div class="testimonial-info"><div class="testimonial-role">Codeium</div></div></div>
     </div>
   </div>
 </section>
@@ -379,9 +380,9 @@ footer a{color:var(--ink-4);transition:color 0.2s}footer a:hover{color:var(--ink
 <section class="how" id="how">
   <div class="how-header sr-blur"><h2>Setup</h2><span class="num">3 steps</span></div>
   <div class="how-steps">
-    <div class="how-step sr" style="--i:0"><div class="how-step-num">1</div><h3>Install</h3><p><code>brew install quint</code><br>Single binary. No runtime. No dependencies. Cross-platform.</p></div>
-    <div class="how-step sr" style="--i:1"><div class="how-step-num">2</div><h3>Init</h3><p><code>quint init</code><br>Detects your AI tools. Generates Ed25519 keypair. Wraps your MCP servers automatically.</p></div>
-    <div class="how-step sr" style="--i:2"><div class="how-step-num">3</div><h3>Done</h3><p><code>quint dashboard</code><br>Every tool call is now intercepted, policy-checked, risk-scored, signed, and logged.</p></div>
+    <div class="how-step sr" style="--i:0"><div class="how-step-num">1</div><h3>Install</h3><p><code>brew install quint-security/tap/quint</code><br>Single binary. No runtime. No dependencies. macOS &amp; Linux.</p></div>
+    <div class="how-step sr" style="--i:1"><div class="how-step-num">2</div><h3>Setup</h3><p><code>quint setup</code><br>Detects Claude Code, Cursor, Cline, Windsurf. Generates keys. Connects GitHub, Notion, Slack via OAuth. One command.</p></div>
+    <div class="how-step sr" style="--i:2"><div class="how-step-num">3</div><h3>Done</h3><p><code>quint dashboard</code><br>Every tool call is now intercepted, policy-checked, risk-scored, signed, and logged. Open the dashboard to see it live.</p></div>
   </div>
 </section>
 
@@ -398,7 +399,7 @@ footer a{color:var(--ink-4);transition:color 0.2s}footer a:hover{color:var(--ink
 <section class="cta" id="cta">
   <h2 class="sr-blur">Secure your agents.<br><em>Today.</em></h2>
   <p>One command. Zero config. Data never leaves your machine.</p>
-  <div style="max-width:460px;margin:0 auto;"><div class="term" style="transform:none;"><div class="term-chrome"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div></div><div class="term-body" style="min-height:auto;line-height:2;"><div><span class="p">$</span> <span class="c">brew install quint-security/tap/quint</span></div><div><span class="p">$</span> <span class="c">quint init</span></div><div><span class="ok">&#10003; Quint is protecting your agents.</span></div></div></div></div>
+  <div style="max-width:500px;margin:0 auto;"><div class="term" style="transform:none;"><div class="term-chrome"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div></div><div class="term-body" style="min-height:auto;line-height:2;"><div><span class="p">$</span> <span class="c">brew install quint-security/tap/quint</span></div><div><span class="p">$</span> <span class="c">quint setup</span></div><div><span class="ok">&#10003;</span> <span class="o">Detected Claude Code, Cursor, Cline</span></div><div><span class="ok">&#10003;</span> <span class="o">Connected GitHub, Notion, Slack</span></div><div><span class="ok">&#10003;</span> <span class="c">Your agents are secured.</span></div></div></div></div>
 </section>
 
 <section class="waitlist" id="waitlist">
@@ -424,7 +425,7 @@ document.querySelectorAll('a,button,.pipe-node,.testimonial').forEach(el=>{
 (function(){const h1=document.getElementById('hero-h1');const text='Security for\nAI agents';const lines=text.split('\n');let w=0;lines.forEach((line,li)=>{if(li>0)h1.appendChild(document.createElement('br'));line.split(' ').forEach(word=>{const s=document.createElement('span');s.className='word';s.style.animationDelay=(0.15+w*0.12)+'s';if(word==='AI'||word==='agents'){const em=document.createElement('em');em.textContent=word+' ';s.appendChild(em)}else{s.textContent=word+' '}h1.appendChild(s);w++})})})();
 
 // ===== TERMINAL =====
-const L=[{t:'cmd',s:'$ brew install quint-security/tap/quint'},{t:'cmd',s:'$ quint init',d:700},{t:'out',s:'<span class="ok">&#10003;</span> Detected Claude Code with 3 MCP servers',d:400},{t:'out',s:'<span class="ok">&#10003;</span> Generated Ed25519 signing keypair',d:250},{t:'out',s:'<span class="ok">&#10003;</span> Created policy (role: balanced)',d:250},{t:'out',s:'<span class="ok">&#10003;</span> Wrapped 3 servers &mdash; Quint is active',d:250},{t:'gap'},{t:'cmd',s:'$ quint status',d:900},{t:'out',s:'<span class="ok">&#10003;</span> <span class="c">read_file</span> <span class="o">&rarr; allowed</span> <span class="score score-lo">risk 8</span>',d:350},{t:'out',s:'<span class="ok">&#10003;</span> <span class="c">list_directory</span> <span class="o">&rarr; allowed</span> <span class="score score-lo">risk 5</span>',d:200},{t:'out',s:'<span class="no">&#10007;</span> <span class="c">execute_command</span> <span class="o">&rarr; scope denied</span> <span class="score score-hi">risk 72</span>',d:200},{t:'out',s:'<span class="warn">&#9888;</span> <span class="c">write_file /etc/hosts</span> <span class="o">&rarr; approval pending</span> <span class="score score-md">risk 61</span>',d:200}];
+const L=[{t:'cmd',s:'$ brew install quint-security/tap/quint'},{t:'cmd',s:'$ quint setup',d:700},{t:'out',s:'<span class="ok">&#10003;</span> Detected Claude Code, Cursor, Cline',d:400},{t:'out',s:'<span class="ok">&#10003;</span> Found 5 MCP servers',d:250},{t:'out',s:'<span class="ok">&#10003;</span> Generated Ed25519 signing keypair',d:250},{t:'out',s:'<span class="ok">&#10003;</span> Connected GitHub via OAuth',d:350},{t:'out',s:'<span class="ok">&#10003;</span> Connected Notion via OAuth',d:250},{t:'out',s:'<span class="ok">&#10003;</span> Gateway active &mdash; all servers proxied',d:250},{t:'gap'},{t:'out',s:'<span class="ok">&#10003;</span> <span class="c">github.search_repositories</span> <span class="o">&rarr; allowed</span> <span class="score score-lo">risk 12</span>',d:500},{t:'out',s:'<span class="ok">&#10003;</span> <span class="c">fs-server.read_file</span> <span class="o">&rarr; allowed</span> <span class="score score-lo">risk 5</span>',d:200},{t:'out',s:'<span class="no">&#10007;</span> <span class="c">github.push_files</span> <span class="o">&rarr; scope denied</span> <span class="score score-hi">risk 72</span>',d:200},{t:'out',s:'<span class="warn">&#9888;</span> <span class="c">fs-server.write_file /etc/hosts</span> <span class="o">&rarr; approval pending</span> <span class="score score-md">risk 61</span>',d:200}];
 const el=document.getElementById('t');let delay=0;
 L.forEach((l,i)=>{delay+=l.d||150;if(l.t==='gap'){delay+=400;return}setTimeout(()=>{const d=document.createElement('div');d.className='line';d.innerHTML=l.t==='cmd'?`<span class="p">${l.s[0]}</span> <span class="c">${l.s.slice(2)}</span>`:l.s;el.appendChild(d);el.querySelectorAll('.cursor').forEach(c=>c.remove());if(i===L.length-1){const c=document.createElement('span');c.className='cursor';d.appendChild(c)}},delay)});
 
