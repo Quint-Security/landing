@@ -20,10 +20,30 @@ const levelColors: Record<string, { bar: string; text: string; badge: string }> 
   hi: { bar: "from-quint-red/20 to-quint-red", text: "text-quint-red", badge: "bg-quint-red/10 text-quint-red border-quint-red/20" },
 }
 
-function MeterBar({ score, level, visible }: { score: number; level: string; visible: boolean }) {
+function MeterBar({ score, level, delay }: { score: number; level: string; delay: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    let timeout: NodeJS.Timeout
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          timeout = setTimeout(() => setVisible(true), delay)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => { observer.disconnect(); clearTimeout(timeout) }
+  }, [delay])
+
   const colors = levelColors[level]
   return (
-    <div className="flex-1 h-7 bg-quint-surface-2 rounded-md overflow-hidden border border-quint-line">
+    <div ref={ref} className="flex-1 h-7 bg-quint-surface-2 rounded-md overflow-hidden border border-quint-line">
       <div
         className={`h-full rounded-md bg-gradient-to-r ${colors.bar} transition-all duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)]`}
         style={{ width: visible ? `${score}%` : "0%" }}
@@ -33,22 +53,8 @@ function MeterBar({ score, level, visible }: { score: number; level: string; vis
 }
 
 export function RiskMeter() {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
-      { threshold: 0.15 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <section className="max-w-[1000px] mx-auto px-6 md:px-12 pt-16 pb-8" id="risk-demo" ref={ref}>
+    <section className="max-w-[1000px] mx-auto px-6 md:px-12 pt-16 pb-8" id="risk-demo">
       <SectionHeader title="Risk scoring in action" label="live demo" />
       <div className="space-y-4">
         {meters.map((m, i) => {
@@ -59,7 +65,7 @@ export function RiskMeter() {
                 <span className="w-full md:w-[180px] md:text-right text-muted-foreground shrink-0 text-xs md:text-sm">
                   {m.tool}
                 </span>
-                <MeterBar score={m.score} level={m.level} visible={visible} />
+                <MeterBar score={m.score} level={m.level} delay={i * 200} />
                 <span className={`w-[50px] text-sm shrink-0 ${colors.text}`}>
                   {m.score}
                 </span>
